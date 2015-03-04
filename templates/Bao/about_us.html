@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+{% extends 'base_Bao.html' %}
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}About Us{% endblock %}
+
+{% block body_block %}
+		<div class="page-header">
+			<h1> About Us </h1>
+		</div>
+		<div>	
+			<p> We are Team Karma Chameleon Productions and we are excited to bring you the first ever non-fash based online Bao game!</p>
+
+			<h2>Meet the Team</h2>
+			<table border="1">
+				<tr>
+					<td>Lisa Brooks</td>
+					<td><img src="{% static "images/female_silhouette.jpg" %}" alt="Lisa" height="110" width="90"/></td>
+				</tr>
+				<tr>
+					<td>Sara Hillberg</td>
+					<td><img src="{% static "images/female_silhouette.jpg" %}" alt="Lisa" height="110" width="90"/></td>
+				</tr>
+				<tr>
+					<td>Colin Kirk</td>
+					<td><img src="{% static "images/male_silhouette.jpg" %}" alt="Lisa" height="110" width="90"/></td>
+				</tr>
+				<tr>
+					<td>Craig Reilly</td>
+					<td><img src="{% static "images/male_silhouette.jpg" %}" alt="Lisa" height="110" width="90"/></td>
+				</tr>
+			</table>
+		</div>	
+{% endblock %}

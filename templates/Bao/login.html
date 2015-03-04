@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% extends 'base_Bao.html' %}
+{% load staticfiles %}
+
+{% block title %}Bao Login{% endblock %}
+
+{% block body_block %}
+
+	<h1>Login to Bao</h1>
+
+	<form id="login_form" method="post" action="{% url 'auth_login' %}">
+		{% csrf_token %}
+		username: <input type="text" name="username" value="" size="50" />
+		<br />
+		Password: <input type="password" name="password" value="" size="50" />
+		<br />
+
+		<input type="submit" value="submit" />
+	</form>
+	<hr />
+	<ul>
+		<li><a href="{% url 'index_Bao' %}">Back to homepage</a></li>
+		<li>No account? Register<a href = "{% url 'registration_register' %}"> here!</a></li>
+	</ul>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{% extends 'base_Bao.html' %}
+<!--{% load static %} <!-- used to include JavaScript/CSS -->
+{% load staticfiles %}
+
+{% block title %}Bao{% endblock %}
+
+	<!--	<link rel = "stylesheet" href="{% static "css/base.css" %}" /> <!--CSS
+		<script src="{%  static "js/jquery.js" %}"></script> <!--JavaScript-->
+{% block body_block %}
+	<div class="page-header">
+		{% if user.is_authenticated %}
+			<h1>{{user.username}}, will you be the next Bao Master?</h1>
+		{% else %}
+			<h1>Will you be the next Bao Master?</h1>
+		{% endif %}
+	</div>	
+	<div>	
+		{% if user.is_authenticated %}
+		<strong><a href="{% url 'new_game' %}">Play</a> today and find out!</strong><br />
+		{% else %}
+		<strong><a href="{% url 'registration_register' %}">Play</a> today and find out!</strong><br />
+		{% endif %}
+
+		<br />
+		<img src ="{% static "images/Bao_beingPlayed.jpg" %}" alt="People playing a game of Bao" height="500" width="500"/><br />
+	</div>	
+{% endblock %}
+{% block side_block %}		
+		<div>
+		Are you new to Bao? If so, learn how to play in <a href="{% url 'tutorial' %}">tutorial mode</a>.<br />
+		</div>
+		<br />
+		<div>
+			{% if user.is_authenticated %}
+				<p>Visits to Bao: {{ visits }}</p>
+			{% else %}
+				<p>Visits to Bao: {{ visits }}</p>
+			{% endif %}	
+		</div>	
+
+{% endblock %}

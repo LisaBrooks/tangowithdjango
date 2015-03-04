@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends 'base_BAO.html' %}
+{% load staticfiles %}
+	
+{% block title %}Register with BAO{% endblock %} 
+
+{% block body_block %}
+
+	<h1>Register with BAO</h1>
+	{% if registered %}
+	BAO says: <strong> Thank you for registering with BAO! </strong><br />
+	<a href="{% url 'index_BAO' %}">Return to homepage</a><br />
+	{% else %}
+	BAO says: <strong> Register Here! </strong>
+	<form id = "user_form" method = "post" action ="{% url 'registration_register' %}" enctype = "multipart/form-data">
+		{% csrf_token %}
+		<!-- display the form neatly - one element per line -->
+		{{user_form.as_p}}
+		{{profile_form.as_p}}
+
+		<input type="submit" name="submit" value="Register" />
+	</form>
+	{% endif %}
+	<hr />
+	<ul>
+		<li><a href="{% url 'index_BAO' %}">Return to homepage</a></li>
+	</ul>
+
+
+{% endblock %}
