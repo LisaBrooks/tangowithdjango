@@ -12,7 +12,7 @@
 	<a href="{% url 'index_BAO' %}">Return to homepage</a><br />
 	{% else %}
 	BAO says: <strong> Register Here! </strong>
-	<form id = "user_form" method = "post" action ="{% url 'registration_register' %}" enctype = "multipart/form-data">
+	<form id = "user_form" method = "post" action ="{% url 'register_Bao' %}" enctype = "multipart/form-data">
 		{% csrf_token %}
 		<!-- display the form neatly - one element per line -->
 		{{user_form.as_p}}
@@ -23,7 +23,7 @@
 	{% endif %}
 	<hr />
 	<ul>
-		<li><a href="{% url 'index_BAO' %}">Return to homepage</a></li>
+		<li><a href="{% url 'index_Bao' %}">Return to homepage</a></li>
 	</ul>
 
 

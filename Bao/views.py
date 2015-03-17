@@ -5,6 +5,8 @@ from Bao.forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from Bao.models import UProfile
+
 def index(request):
 	context_dict = {'boldmessage': "Play today and find out!"}
 	
@@ -36,14 +38,22 @@ def index(request):
 	# return a rendered response to the client
 	return response
 
-def about_Bao(request):
-	return render(request, 'Bao/about_Bao.html')
+def bao_rules(request):
+	return render(request, 'Bao/Bao_rules.html')
 
 def about_us(request):
 	return render(request, 'Bao/about_us.html')
 
 def tutorial(request):
+#	likes = request.session.get('likes')
+
 	return render(request, 'Bao/tutorial.html')
+
+@login_required
+def like_tutorial(request):
+	# there is only one tutorial so there is no need to check the tutorial id.
+	likes = likes + 1
+	return HttpResponse(likes)
 
 @login_required
 def new_game(request):
@@ -82,6 +92,8 @@ def register(request):#, register_username_slug):
 		user_form = UserForm(data=request.POST)
 		profile_form = UserProfileForm(data=request.POST)
 
+		print "REGISTER POST"
+
 		# if and only if both forms are valid the information
 		# can be processed.
 		if user_form.is_valid() and profile_form.is_valid():
@@ -103,18 +115,25 @@ def register(request):#, register_username_slug):
 			if 'picture' in request.FILES:
 				profile.picture = request.FILES['picture']
 
+			profile.score = 0
+
 			# save the profile_form information in the UProfile
 			# model instance.
 			profile.save()
+
+			print "HELLO LISA"
+			print profile
 
 			# Now all elements of the registration have been 
 			# performed and the user is now registered. Update the 
 			# boolean.
 			successful_registration = True
+			user=authenticate(username=user.username, password=user.password)
 
 		# however either or both of the forms - user_form, profile_form
 		# have invalid data then print the errors.
 		else:
+			print "ERROR!!!"
 			print user_form.errors, profile_form.errors
 	
 	# Not a HTTP POST, therefore render our form using two ModelForm
@@ -122,6 +141,11 @@ def register(request):#, register_username_slug):
 	else:
 		user_form=UserForm()
 		profile_form=UserProfileForm()
+
+	if successful_registration:
+		return HttpResponseRedirect('/Bao/')
+	else: 
+		print "Error in registration"	
 
 	# Dependant on the context render the template.
 	return render(request, 'Bao/register.html',
@@ -171,7 +195,11 @@ def user_logout(request):
 
 @login_required
 def my_profile(request):
-	return render(request, 'Bao/my_profile.html')
+	user = request.user
+	up = UProfile.objects.get(user=user)
+
+	context_dict =  {'up': up}
+	return render(request, 'Bao/my_profile.html',context_dict)
 
 
 

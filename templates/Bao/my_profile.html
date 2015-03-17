@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+
 {% extends 'base_Bao.html' %}
 {% load staticfiles %}
+{% load static %}
 
 {% block title %}My Profile{% endblock %}
 
@@ -11,16 +13,15 @@
 
 	</div>	
 	<div>
-		<b>Medals</b>
 		<table border="1">
-		<tr><th> Number of Wins </th><th> Games Finished </th></tr>
-		<tr><td> # </td><td>#</td></tr>
+		<tr><th> Number of Wins </th></tr>
+		<tr><td> {{up.score}} </td></tr>
 		</table> 
 	</div>	
-	
-{% endblock %}
-{% block side_block %}		
-		<img src ="{% static "images/female_silhouette.jpg" %}" alt="{{user.username}} avitar" height = "200" width="150"/>
+		{{up.picture}} <br/>
+		
+		
+	<!--<img src ="{% static "{{up.picture}}" %}" alt="{{user.username}} avitar" height = "200" width="150"/>-->
 {% endblock %}	
 
 

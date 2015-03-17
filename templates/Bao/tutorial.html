@@ -13,8 +13,17 @@
 
 		<b>TUTORIAL</b><br />
 	</div>
-	<!--
-	<ul>
-		<li><a href="/Bao/">Return to home page</a></li>
-	</ul>-->	
+
+
+	<!-- to make use of AJAX in our webapp we will allow logged in users to like the tutorial -->
+
+	<p> 
+		<strong id="like_count">{{ tutorial_likes.likes }}</strong> people like this tutorial.
+
+		<button id="likes" class="btn btn-primary" type="button">
+			<span class="glyphicon glyphicon-thumbs-up"></span>
+			Like
+		</button>
+	</p>
+		
 {% endblock %}
