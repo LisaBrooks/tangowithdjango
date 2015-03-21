@@ -68,14 +68,24 @@ function timeoutCheck()
 function drawGameBoard() 
 {
 	var i = 0;
+
+	//This makes the background colour for the board
+	ctx.beginPath();    
+    //ctx.rect(0, 0, 0, 0);
+	ctx.stroke();
+	ctx.fillStyle = "#6B4724";
+	ctx.fillRect(0, 0, 800, 400);
+	ctx.closePath();
  
  	//draw vertical lines
     for (i = 1; i < 8; i++)
     {
+    
 	    ctx.beginPath();
 	    ctx.moveTo(cellWidth * i, 0);
 	    ctx.lineTo(cellWidth * i, height);
 	    ctx.stroke();
+
 	}
   
     // Drawing horizontal lines
@@ -126,46 +136,169 @@ function drawBalls()
 
 
 	var i = 0;
+	var j = 0;
 	var cellMiddleHeight = cellHeight /2;
-	ctx.font="30px Courier";
+	ctx.font="40px Arial";
+	var coordsX = [ 0, 15, -25, -15, 25, 5];
+	var coordsY = [25, -15, 15, -25, 0, 10];
 
 
 	//draw player1's front row
 	for (i = 0; i < 8; i++)
 	{
+		ctx.fillStyle="#997A5C";
+		ctx.beginPath();
 		var frontBalls = player1Board[i].length;
-
 		// ctx.fillText("" + i,cellMiddleHeight + (cellHeight * i),(cellWidth * 3) - (cellWidth / 2));
-		ctx.fillText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 3) - (cellWidth / 2));
-	}
+		var pit = ctx.arc(cellMiddleHeight + (cellHeight * i), (cellWidth * 3) - (cellWidth / 2), 40, 0, Math.PI*2, true); 
+		ctx.closePath();
+		ctx.fill();
+		//ctx.fillStyle = "black"; // font color to write the text with
+		//ctx.fillText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 3) - (cellWidth / 2));
 
+		for (j = 0; j < frontBalls; j++){
+
+			if (j <= 6){ //Looping creating balls
+			ctx.fillStyle = "black"; // balls colour
+			ctx.beginPath();
+			ctx.arc(cellMiddleHeight + (cellHeight * i - coordsX[j]),(cellWidth * 3) - (cellWidth / 2 - coordsY[j]),7,0,2*Math.PI),true;
+			ctx.closePath();
+			ctx.fill();
+			ctx.closePath();
+			}
+
+			if (j < 300 ){ //this loop prints out now all the numbers, it will be modified only to print larger numbers later
+				ctx.beginPath();
+				ctx.fillStyle = "purple"; //inside of text colour
+				ctx.strokeStyle = "black";
+				ctx.textAlign="center"; 
+				ctx.fillText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 3) - (cellWidth / 2));
+				ctx.strokeText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 3) - (cellWidth / 2));
+				ctx.stroke();
+				ctx.fill ();
+				ctx.closePath();
+			}
+	
+		}
+		
+		//ctx.stroke();
+	}
+ 
 	//draw player1's back row
 	for (i = 8; i < 16; i++)
 	{
+		ctx.fillStyle="#997A5C";
+		ctx.beginPath();
 		var backBalls = player1Board[23 - i].length;
-
+		ctx.arc(cellMiddleHeight + (cellHeight * (i- 8)), (cellWidth * 4) - (cellWidth / 2), 40, 0, Math.PI*2, true); 
+		ctx.closePath();
+		ctx.fill();
+		
 		// ctx.fillText("" + (23 - i),cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth * 4) - (cellWidth / 2));
-		ctx.fillText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth * 4) - (cellWidth / 2));
+		//ctx.fillText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth * 4) - (cellWidth / 2));
+
+			for (j = 0; j < backBalls; j++){
+
+			if (j <= 6){ //Looping creating balls
+			ctx.fillStyle = "black"; // balls colour
+			ctx.beginPath();
+			ctx.arc(cellMiddleHeight + (cellHeight * (i-8) - coordsX[j]),(cellWidth * 4) - (cellWidth / 2 - coordsY[j]),7,0,2*Math.PI),true;
+			ctx.closePath();
+			ctx.fill();
+			ctx.closePath();
+			}
+
+			if (j < 300 ){ //this loop prints out now all the numbers, it will be modified only to print larger numbers later
+				ctx.beginPath();
+				ctx.fillStyle = "purple"; //inside of text colour
+				ctx.strokeStyle = "black";
+				ctx.textAlign="center"; 
+				ctx.strokeText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth * 4) - (cellWidth / 2));
+				ctx.fillText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth * 4) - (cellWidth / 2));
+				ctx.stroke();
+				ctx.fill ();
+				ctx.closePath();
+			}
+	
+		}
+
 	}
 
 	//draw player2's front row
 	for (i = 0; i < 8; i++)
 	{
+		ctx.fillStyle="#997A5C";
+		ctx.beginPath();
 		var frontBalls = player2Board[i].length;
-
+		ctx.arc(cellMiddleHeight + (cellHeight * i), (cellWidth * 2) - (cellWidth / 2), 40, 0, Math.PI*2, true); 
+		ctx.closePath();
+		ctx.fill();
+		
 		// ctx.fillText("" + i,cellMiddleHeight + (cellHeight * i),(cellWidth * 2) - (cellWidth / 2));
-		ctx.fillText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 2) - (cellWidth / 2));
+		//ctx.fillText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 2) - (cellWidth / 2));
+	
+
+		for (j = 0; j < frontBalls; j++){
+
+			if (j <= 6){ //Looping creating balls
+			ctx.fillStyle = "black"; 
+			ctx.beginPath();
+			ctx.arc(cellMiddleHeight + (cellHeight * i - coordsX[j]),(cellWidth * 2) - (cellWidth / 2 - coordsY[j]),7,0,2*Math.PI),true;
+			ctx.closePath();
+			ctx.fill();
+		}
+			//ctx.closePath();
+
+			if (j < 500){ //this loop prints out now all the numbers, it will be modified only to print larger numbers later
+				ctx.fillStyle = "red"; 
+				//ctx.beginPath();
+				ctx.fillText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 2) - (cellWidth / 2));
+				//ctx.closePath();
+				//console.log("HAPPENED");
+			}
+
+		}
+
 	}
 
 	//draw player2's back row
 	for (i = 8; i < 16; i++)
 	{
+		ctx.fillStyle="#997A5C";
+		ctx.beginPath();
 		var backBalls = player2Board[23 - i].length;
+		ctx.arc(cellMiddleHeight + (cellHeight * (i- 8)), (cellWidth) - (cellWidth / 2), 40, 0, Math.PI*2, true); 
+		ctx.closePath();
+		ctx.fill();
+		ctx.fillStyle = "black"; 
 
 		// ctx.fillText("" + (23 - i),cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth) - (cellWidth / 2));
-		ctx.fillText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth) - (cellWidth / 2));
+		//ctx.fillText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth) - (cellWidth / 2));
+
+			for (j = 0; j < backBalls; j++){
+
+			if (j <= 6){	//Looping creating balls
+			ctx.fillStyle = "black"; 
+			ctx.beginPath();
+			ctx.arc(cellMiddleHeight + (cellHeight * (i-8) - coordsX[j]),(cellWidth) - (cellWidth / 2 - coordsY[j]),7,0,2*Math.PI),true;
+			ctx.closePath();
+			ctx.fill();
+		}
+			//ctx.closePath();
+
+			if (j < 500){ //this loop prints out now all the numbers, it will be modified only to print larger numbers later
+				ctx.fillStyle = "red"; 
+				//ctx.beginPath();
+				ctx.fillText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth) - (cellWidth / 2));
+				//ctx.closePath();
+				//console.log("HAPPENED");
+			}
+
+		}
+
 	}
 }
+
 
 function onCanvasClick(e) {
     var mCoordinate = getMouseLocation(e);
