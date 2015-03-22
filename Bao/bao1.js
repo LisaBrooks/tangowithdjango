@@ -33,6 +33,11 @@ var ctx;
 var player1Board = [];
 var player2Board = [];
 var currentPlayer = 1;
+var firstPitChoice; 
+var secondPitChoice;
+var startPitChosen = false;
+var directionPitChosen = false;
+var pit_index;
 
 window.onload = function () 
 {
@@ -50,10 +55,8 @@ window.onload = function ()
     // Draw game board when the window loads
     // drawGameBoard();
     initBoard();
-    
-	drawBalls();
 
-    setTimeout(timeoutCheck, 10000);
+    // setTimeout(timeoutCheck, 10000);
 
 
 
@@ -122,7 +125,10 @@ function initBoard()
 		player2Board.push([]);
 		player2Board[i].push(1);
 		player2Board[i].push(1);
+
+
 	}
+		drawBalls();
 
 	// console.log(player1Board);
 	// console.log(player2Board);
@@ -299,17 +305,77 @@ function drawBalls()
 	}
 }
 
-
+//SARA YOUR CODE FOR TURNING COLOURS ON SHOULD BE CALLED FROM THIS FUNCTION, BUT PROBABLY DO THE WORK IN HELPER FUNCTIONS.
+//DON'T MANIPULATE MY INSTANCE VARIABLES... BAD THINGS HAPPEN WHEN YOU DO THAT!	
 function onCanvasClick(e) {
+	//get the coordinate of the mouse click on the canvas
     var mCoordinate = getMouseLocation(e);
-    var pit = getPitFromLocation(mCoordinate);
-    var pit_index = processPitClick(pit);
+
+    //if the player has not yet chosen a starting pit
+    if (!startPitChosen)
+    {
+    	// console.log("Got into the !startPitChosen bit")
+
+    	//get the pit coordinate of the first choice pit
+    	firstPitChoice = getPitFromLocation(mCoordinate);
+
+    	//get the index of the pit, pit_index is undefined if the player clicks on the opponent's half
+    	pit_index = processPitClick(firstPitChoice);
+
+    	//if the pit index isn't undefined, set startPitChosen to true
+    	if (pit_index !== undefined)
+    	{
+    		//check if the pit is full enough to admit a move
+    		var pitFullEnough = checkPitIsFullEnough(pit_index);
+
+    		//if the pit is full enough (that is it contains at least 2 balls) set startPitChosen to true
+    		if (pitFullEnough)
+    		{
+    			startPitChosen = true;
+    	   		// console.log("Start pit has been chosen");
+    		}
+    	   	
+    	}
+    }
+    else //if the first pit is chosen, let the user choose the second
+    {
+    	secondPitChoice = getPitFromLocation(mCoordinate);
+
+    	//if the second choice is the same as the first, reset values to start again
+    	if (secondPitChoice.x === firstPitChoice.x && secondPitChoice.y === firstPitChoice.y)
+    	{
+    		// console.log("that was the same pit");
+    		firstPitChoice = undefined;
+    		startPitChosen = false;
+	    	
+    	}
+    	else // if the second choice is different to the first, set directionPitChosen to true
+    	{
+    		// console.log("Direction pit has been chosen")
+    		directionPitChosen = true;
+    	}
+    }
+
+    
 
     //only process moves from the current player 
-    if (pit_index !== undefined)
+    if (pit_index !== undefined && directionPitChosen) // && !startPitChosen && (secondPitChoice !== firstPitChoice))	
     {
-    	makeMove(pit_index);
-        console.log(pit_index);	
+    	//get the index of second choice pit
+    	var directionIndex = processPitClick(secondPitChoice);
+    	// console.log("Inputing pit_index " + pit_index + " and direction index " + directionIndex);
+    	//get if we should go left or right
+    	var direction = directionChoice(pit_index, directionIndex);
+    	// console.log("Got in the move bit");
+    	//make a move
+    	makeMove(pit_index, direction);
+        // console.log(pit_index);	
+    }
+    else
+    {
+    	console.log("I'm not making a move! " + pit_index);
+    	// firstPitChoice = undefined;
+    	// startPitChosen = undefined;
     }
     // console.log(pit_index);
 
@@ -383,15 +449,13 @@ if (mCoordinate.y < cellWidth)
     return pitCoordinate;
 }
 
-//returns the input conditions for a move, that is
-//a tuple { pit_index: i, direction: dir }
-// for now we only return the index and always move in the positive directoin
+// gets the index of the pit
 function processPitClick(pit)
 {	
 	//lazily change the player when testing
 	// currentPlayer = 1;
 
-	var pit_index;
+	var pit_i;
 	var i;
 
 	//get the starting pit
@@ -402,14 +466,14 @@ function processPitClick(pit)
 			// console.log("We're on the front row for player1");
 
 			//the starting pit on the front row is just the x coordinate of the pit
-			pit_index = pit.x;
+			pit_i = pit.x;
 		}
 		if (pit.y === 3)
 		{
 			// console.log("We're on the back row for player1");
 
 			//
-			pit_index = 15 - pit.x;
+			pit_i = 15 - pit.x;
 		}
 	}
 	else
@@ -418,29 +482,31 @@ function processPitClick(pit)
 		{
 			// console.log("We're on the back row for player2");
 
-			pit_index = 15 - pit.x;
+			pit_i = 15 - pit.x;
 		}
 		if (pit.y === 1)
 		{
 			// console.log("We're on the front row for player2");
 
 			//the starting pit on the front row is just the x coordinate of the pit
-			pit_index = pit.x;
+			pit_i = pit.x;
 
 		}
 	}
 
-	return pit_index;
+	return pit_i;
 }
 
-function makeMove(pit_i)
+//the game logic goes in here! makes moves that obey all rules, apart from the "you must steal if you can" rule
+function makeMove(pit_i, dir)
 {
 	var endPitEmpty = false;
 	var startPit;
-	var endPit
+	var endPit;
+	var direction = dir;
 
 	//get the pit from which to start
-	if (currentPlayer === 1)
+	if (currentPlayer === 1 && player1Board[pit_i].length > 1)
 	{
 		startPit = player1Board[pit_i];
 	}
@@ -449,19 +515,43 @@ function makeMove(pit_i)
 		startPit = player2Board[pit_i];
 	}
 
+	// if (direction)
+	// {
+	// 	console.log("Let's go right and dir = " + dir);
+	// }
+	// else
+	// {
+	// 	console.log("Let's go left and dir = " + dir);
+	// }
 	//keep going until the move ends in an empty pit
 	while (!endPitEmpty)
 	{
 		//first, check if the pit this part of the move ends on
 		//is empty or not
 
-		if (currentPlayer === 1)
+		var endPitIndex
+		if (direction)
 		{
-			endPit = player1Board[((pit_i + startPit.length)%16)];
+			endPitIndex = ((pit_i + startPit.length)%16);
 		}
 		else
 		{
-			endPit = player2Board[((pit_i + startPit.length)%16)];
+			endPitIndex = ((pit_i - startPit.length)%16);
+		}
+
+		if (endPitIndex < 0)
+		{
+			endPitIndex = endPitIndex + 16;
+		}
+
+		if (currentPlayer === 1)
+		{
+			
+			endPit = player1Board[endPitIndex];
+		}
+		else
+		{
+			endPit = player2Board[endPitIndex];
 		}
 
 		if (endPit.length === 0)
@@ -473,12 +563,29 @@ function makeMove(pit_i)
 		//pits, up to end pit
 		while (startPit.length > 0)
 		{
-			pit_i++;
-
-			if (pit_i === 16)
+			if (direction)
 			{
-				pit_i = 0;
+				pit_i++;
 			}
+			else
+			{
+				pit_i--;
+			}
+
+			if (direction)
+			{
+				if (pit_i === 16)
+				{
+					pit_i = 0;
+				}
+			}
+			else
+			{
+				if (pit_i === -1)
+				{
+					pit_i = 15;
+				}
+			}			
 
 			if (currentPlayer === 1)
 			{
@@ -544,6 +651,9 @@ function makeMove(pit_i)
 		// }
 		
 	}
+
+	checkForWinner();
+
 	if (currentPlayer ===1)
 	{
 		currentPlayer = 2;
@@ -552,17 +662,121 @@ function makeMove(pit_i)
 	{
 		currentPlayer = 1;
 	}
+
+	firstPitChoice = undefined;
+	secondPitChoice = undefined;
+	startPitChosen = false;
+	directionPitChosen = false;
 }
+
+function checkPitIsFullEnough(pit_i)
+{
+	var isItFull = false;
+
+	if (currentPlayer === 1 && player1Board[pit_i].length >= 2)
+	{
+		isItFull = true;
+	}
+	else if (currentPlayer === 2 && player2Board[pit_i].length >=2)
+	{
+		isItFull = true;
+	}
+
+	return isItFull;
+}
+
+//false is left, true is right
+function directionChoice(pit_i, directionPit_i)
+{
+	var direction;
+
+	console.log("I'm going from " + pit_i + " to " + directionPit_i);
+
+	if (pit_i === 0 && directionPit_i === 15)
+	{
+		console.log("pit_i === 0 && directionPit_i === 15")
+		direction = false;
+	}
+	else if (pit_i === 15 && directionPit_i === 0)
+	{
+		direction = true;
+	}
+	else
+	{
+		if (pit_i < directionPit_i)
+		{
+			direction = true;
+		}
+		else
+		{
+			console.log("pit_i < directionPit_i");
+			direction = false;
+		}
+	}
+	return direction;
+}
+
+function checkForWinner() 
+{
+	var i = 0;
+	var frontRow1 = 0;
+	var frontRow2 = 0;
+	var player1AllSingles = true;
+	var player2AllSingles = true;
+
+	//add up the front rows and check if they're empty
+	for (i = 0; i < 8; i++)
+	{
+		frontRow1 = frontRow1 + player1Board[i].length;
+		frontRow2 = frontRow2 + player2Board[i].length;
+	}
+
+	//check that all the don't contain 1 or less balls
+	for (i = 0; i < 16; i++)
+	{
+		if (player1Board[i].length > 1)
+		{
+			player1AllSingles = false;
+		}
+
+		if (player2Board[i].length > 1)
+		{
+			player2AllSingles = false;
+		}
+	}
+
+
+	//if there is a win, print it to the console
+	//we'll have to make this reset the game
+	//SARA we could display a big message?
+	if (frontRow1 === 0 || player1AllSingles)
+	{
+		console.log("player2 wins!");
+	}
+	else if (frontRow2 === 0 )
+	{
+		console.log("player1 wins!");
+	}
+}
+
 
 /*
 
+have the function that takes the pit coordinate do the checking if the pit is the same.
+This will let clicks on the other player's half be easily discounted.
 
-			startingPit = player1Board[pit.x];
+Have pits with 1 or fewer balls be disallowed for a first pit pick.
 
-not what I want to do now, check out the sheet of paper 
+Not this, have a check direction function that returns a boolean!
 
-var player1Board = new Array(16);
-var player2Board - new Array(!6);
+Have the move function take a tuple, (first pit, second pit)
+If first pit < second pit, go one direction
+If first pit > second pit, go the other direction
+Special case if 0 and 15
 
+The computer's moves will just try each direction for every pit that has 2 or more
+copy the arrays so we don't ruin things
+
+Implement the "steal if you can move" by checking if the end pit in this direction is 0-7 and faces a full pit.
 */
 
