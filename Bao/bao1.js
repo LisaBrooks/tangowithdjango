@@ -309,6 +309,19 @@ function drawBalls()
 //DON'T MANIPULATE MY INSTANCE VARIABLES... BAD THINGS HAPPEN WHEN YOU DO THAT!	
 function onCanvasClick(e) {
 	//get the coordinate of the mouse click on the canvas
+
+	var player1Wins = prompt("Should player1 win");
+
+	//if this is left on and anyone finds it annoying, just pressing enter each time acts like it isn't there
+	if (player1Wins === "y")
+	{
+		//Colin, just make your code happen in here... if we put the same code in the win condition it'll work fine.
+		//I know that if finds winners when it should, so its safe to test here and then run it with your code in the 
+		//actual win condition place...
+		console.log("player1Wins = y");
+	}
+	else
+	{
     var mCoordinate = getMouseLocation(e);
 
     //if the player has not yet chosen a starting pit
@@ -386,7 +399,7 @@ function onCanvasClick(e) {
     	// startPitChosen = undefined;
     }
     // console.log(pit_index);
-
+	}
 }
 
 //This function changes the startPitColour based on whether it's selected
@@ -789,7 +802,7 @@ function checkForWinner()
 
 	//if there is a win, print it to the console
 	//we'll have to make this reset the game
-	//SARA we could display a big message?
+	//SARA we could display a big message?s
 	if (frontRow1 === 0 || player1AllSingles)
 	{
 		console.log("player2 wins!");
