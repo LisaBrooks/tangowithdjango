@@ -76,7 +76,7 @@ function drawGameBoard()
 	ctx.beginPath();    
     //ctx.rect(0, 0, 0, 0);
 	ctx.stroke();
-	ctx.fillStyle = "#6B4724";
+	ctx.fillStyle = "#d08a47";
 	ctx.fillRect(0, 0, 800, 400);
 	ctx.closePath();
  
@@ -145,14 +145,14 @@ function drawBalls()
 	var j = 0;
 	var cellMiddleHeight = cellHeight /2;
 	ctx.font="40px Arial";
-	var coordsX = [ 0, 15, -25, -15, 25, 5];
-	var coordsY = [25, -15, 15, -25, 0, 10];
+	var coordsX = [ 0, 20, -25, -15, 25, 5]; //higher number is more to the left
+	var coordsY = [25, 15, 0, 15, 0, 7]; //higher number is lower
 
 
 	//draw player1's front row
 	for (i = 0; i < 8; i++)
 	{
-		ctx.fillStyle="#997A5C";
+		ctx.fillStyle="#fed09e";
 		ctx.beginPath();
 		var frontBalls = player1Board[i].length;
 		// ctx.fillText("" + i,cellMiddleHeight + (cellHeight * i),(cellWidth * 3) - (cellWidth / 2));
@@ -175,12 +175,12 @@ function drawBalls()
 
 			if (j < 300 ){ //this loop prints out now all the numbers, it will be modified only to print larger numbers later
 				ctx.beginPath();
-				ctx.fillStyle = "purple"; //inside of text colour
-				ctx.strokeStyle = "black";
+				ctx.fillStyle = "#1947D1"; //"#0099FF"; //inside of text colour
+				//tx.strokeStyle = "black";
 				ctx.textAlign="center"; 
 				ctx.fillText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 3) - (cellWidth / 2));
-				ctx.strokeText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 3) - (cellWidth / 2));
-				ctx.stroke();
+				//ctx.strokeText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 3) - (cellWidth / 2));
+				//ctx.stroke();
 				ctx.fill ();
 				ctx.closePath();
 			}
@@ -193,7 +193,7 @@ function drawBalls()
 	//draw player1's back row
 	for (i = 8; i < 16; i++)
 	{
-		ctx.fillStyle="#997A5C";
+		ctx.fillStyle="#fed09e";
 		ctx.beginPath();
 		var backBalls = player1Board[23 - i].length;
 		ctx.arc(cellMiddleHeight + (cellHeight * (i- 8)), (cellWidth * 4) - (cellWidth / 2), 40, 0, Math.PI*2, true); 
@@ -216,12 +216,12 @@ function drawBalls()
 
 			if (j < 300 ){ //this loop prints out now all the numbers, it will be modified only to print larger numbers later
 				ctx.beginPath();
-				ctx.fillStyle = "purple"; //inside of text colour
-				ctx.strokeStyle = "black";
+				ctx.fillStyle = "#1947D1";//"#0099FF"; //inside of text colour
+				//ctx.strokeStyle = "black";
 				ctx.textAlign="center"; 
-				ctx.strokeText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth * 4) - (cellWidth / 2));
 				ctx.fillText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth * 4) - (cellWidth / 2));
-				ctx.stroke();
+				//ctx.strokeText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth * 4) - (cellWidth / 2));
+				//ctx.stroke();
 				ctx.fill ();
 				ctx.closePath();
 			}
@@ -233,7 +233,7 @@ function drawBalls()
 	//draw player2's front row
 	for (i = 0; i < 8; i++)
 	{
-		ctx.fillStyle="#997A5C";
+		ctx.fillStyle="#fed09e";
 		ctx.beginPath();
 		var frontBalls = player2Board[i].length;
 		ctx.arc(cellMiddleHeight + (cellHeight * i), (cellWidth * 2) - (cellWidth / 2), 40, 0, Math.PI*2, true); 
@@ -256,7 +256,7 @@ function drawBalls()
 			//ctx.closePath();
 
 			if (j < 500){ //this loop prints out now all the numbers, it will be modified only to print larger numbers later
-				ctx.fillStyle = "red"; 
+				ctx.fillStyle = "#FF3399"; 
 				//ctx.beginPath();
 				ctx.fillText("" + frontBalls,cellMiddleHeight + (cellHeight * i),(cellWidth * 2) - (cellWidth / 2));
 				//ctx.closePath();
@@ -270,7 +270,7 @@ function drawBalls()
 	//draw player2's back row
 	for (i = 8; i < 16; i++)
 	{
-		ctx.fillStyle="#997A5C";
+		ctx.fillStyle="#fed09e";
 		ctx.beginPath();
 		var backBalls = player2Board[23 - i].length;
 		ctx.arc(cellMiddleHeight + (cellHeight * (i- 8)), (cellWidth) - (cellWidth / 2), 40, 0, Math.PI*2, true); 
@@ -293,7 +293,7 @@ function drawBalls()
 			//ctx.closePath();
 
 			if (j < 500){ //this loop prints out now all the numbers, it will be modified only to print larger numbers later
-				ctx.fillStyle = "red"; 
+				ctx.fillStyle = "#FF3399"; 
 				//ctx.beginPath();
 				ctx.fillText("" + backBalls,cellMiddleHeight + (cellHeight * (i- 8)),(cellWidth) - (cellWidth / 2));
 				//ctx.closePath();
@@ -322,6 +322,7 @@ function onCanvasClick(e) {
     	//get the index of the pit, pit_index is undefined if the player clicks on the opponent's half
     	pit_index = processPitClick(firstPitChoice);
 
+
     	//if the pit index isn't undefined, set startPitChosen to true
     	if (pit_index !== undefined)
     	{
@@ -333,6 +334,8 @@ function onCanvasClick(e) {
     		{
     			startPitChosen = true;
     	   		// console.log("Start pit has been chosen");
+    	   		//Send the start pit coordinates to set the start pit colour choice. True means the colour should be special. //SARA
+    			startPitColour(startPitChosen, firstPitChoice.x, firstPitChoice.y);
     		}
     	   	
     	}
@@ -344,9 +347,14 @@ function onCanvasClick(e) {
     	//if the second choice is the same as the first, reset values to start again
     	if (secondPitChoice.x === firstPitChoice.x && secondPitChoice.y === firstPitChoice.y)
     	{
-    		// console.log("that was the same pit");
+
     		firstPitChoice = undefined;
     		startPitChosen = false;
+    		//startPitColour(startPitChosen, firstPitChoice.x, firstPitChoice.y);
+    		console.log("that was the same pit");
+    		drawGameBoard(); //This is done in order to delete the circle that shows what pit has been as the first pit //SARA
+    		drawBalls();
+    	
 	    	
     	}
     	else // if the second choice is different to the first, set directionPitChosen to true
@@ -378,6 +386,39 @@ function onCanvasClick(e) {
     	// startPitChosen = undefined;
     }
     // console.log(pit_index);
+
+}
+
+//This function changes the startPitColour based on whether it's selected
+function startPitColour(booleanParam, xParam, yParam){					
+	var cellMiddleHeight = cellHeight /2;
+	if (booleanParam == true){
+		ctx.beginPath();
+		//ctx.strokeStyle="green";
+		ctx.lineWidth = 7;
+		//ctx.arc(20, 20, 45, 0, Math.PI*2, true); 
+		if (xParam < 8 && yParam == 2){ //first player, front row
+			ctx.arc(cellMiddleHeight + (cellHeight * xParam), (cellWidth * 3) - (cellWidth / 2), 45, 0, Math.PI*2, true);  
+			//ctx.rect(cellMiddleHeight + (cellHeight * xParam), (cellWidth * 3) - (cellWidth / 2), 50, 150);
+			console.log("FIRST");
+		}
+		if (xParam < 8 && yParam == 3){ //first player, back row
+			//ctx.arc(cellMiddleHeight + (cellHeight * (xParam- 8)), (cellWidth * 4) - (cellWidth / 2), 45, 0, Math.PI*2, true); 
+			ctx.arc(cellMiddleHeight + (cellHeight * xParam), (cellWidth * 4) - (cellWidth / 2), 45, 0, Math.PI*2, true);
+			console.log("SECOND");
+		}
+		if (xParam < 8 && yParam == 1){ //second player, front row
+			ctx.arc(cellMiddleHeight + (cellHeight * xParam), (cellWidth * 2) - (cellWidth / 2), 45, 0, Math.PI*2, true); 
+			console.log("THIRD");
+		}
+		if (xParam < 8 && yParam == 0){ //second player, back row
+			ctx.arc(cellMiddleHeight + (cellHeight * (xParam)), (cellWidth) - (cellWidth / 2), 45, 0, Math.PI*2, true); 
+			console.log("FOURTH");
+		}
+		//ctx.fill();
+		ctx.stroke();
+		ctx.closePath();
+	}
 
 }
  
@@ -752,13 +793,29 @@ function checkForWinner()
 	if (frontRow1 === 0 || player1AllSingles)
 	{
 		console.log("player2 wins!");
+		winMessage("Player2");
 	}
 	else if (frontRow2 === 0 )
 	{
 		console.log("player1 wins!");
+		winMessage("Player1");
+
 	}
 }
 
+function winMessage(player){
+	ctx.beginPath(); 
+	ctx.font="50px Verdana";
+	ctx.fillStyle="orange";
+	ctx.StrokeStyle="black";
+	var message = player + " wins. AWESOME!" 
+	ctx.textAlign="center"; 
+	ctx.strokeText(message, 200, 200);
+	ctx.stroke();
+	ctx.fill();
+	ctx.closePath();
+
+}
 
 /*
 
