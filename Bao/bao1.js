@@ -39,6 +39,8 @@ var startPitChosen = false;
 var directionPitChosen = false;
 var pit_index;
 
+var flag = false;
+
 window.onload = function () 
 {
 	// console.log("Got into the js.")
@@ -55,6 +57,8 @@ window.onload = function ()
     // Draw game board when the window loads
     // drawGameBoard();
     initBoard();
+
+    setInterval(computerMove, 5000);
 
     // setTimeout(timeoutCheck, 10000);
 
@@ -310,18 +314,18 @@ function drawBalls()
 function onCanvasClick(e) {
 	//get the coordinate of the mouse click on the canvas
 
-	var player1Wins = prompt("Should player1 win");
+	// var player1Wins = prompt("Should player1 win");
 
-	//if this is left on and anyone finds it annoying, just pressing enter each time acts like it isn't there
-	if (player1Wins === "y")
-	{
-		//Colin, just make your code happen in here... if we put the same code in the win condition it'll work fine.
-		//I know that if finds winners when it should, so its safe to test here and then run it with your code in the 
-		//actual win condition place...
-		console.log("player1Wins = y");
-	}
-	else
-	{
+	// //if this is left on and anyone finds it annoying, just pressing enter each time acts like it isn't there
+	// if (player1Wins === "y")
+	// {
+	// 	//Colin, just make your code happen in here... if we put the same code in the win condition it'll work fine.
+	// 	//I know that if finds winners when it should, so its safe to test here and then run it with your code in the 
+	// 	//actual win condition place...
+	// 	console.log("player1Wins = y");
+	// }
+	// else
+	// {
     var mCoordinate = getMouseLocation(e);
 
     //if the player has not yet chosen a starting pit
@@ -391,7 +395,7 @@ function onCanvasClick(e) {
     	// startPitChosen = undefined;
     }
     // console.log(pit_index);
-	}
+	// }
 }
  
 // Getting mouse x,y coordinate on a click event relative to the canvas
@@ -518,13 +522,15 @@ function makeMove(pit_i, dir)
 	var endPit;
 	var direction = dir;
 
-	//get the pit from which to start
-	if (currentPlayer === 1 && player1Board[pit_i].length > 1)
+	//get the pit from which to start, only take moves
+	if (currentPlayer === 1)
 	{
+		console.log("Starting from player 1");
 		startPit = player1Board[pit_i];
 	}
 	else
 	{
+			console.log("Starting from player 2");
 		startPit = player2Board[pit_i];
 	}
 
@@ -542,7 +548,8 @@ function makeMove(pit_i, dir)
 		//first, check if the pit this part of the move ends on
 		//is empty or not
 
-		var endPitIndex
+		var endPitIndex;
+
 		if (direction)
 		{
 			endPitIndex = ((pit_i + startPit.length)%16);
@@ -609,6 +616,7 @@ function makeMove(pit_i, dir)
 				player2Board[pit_i].push(startPit.pop());	
 			}
 
+			// var stop = prompt("Stop");
 			drawBalls();
 			// setTimeout(drawBalls, 1000);
 			
@@ -674,12 +682,193 @@ function makeMove(pit_i, dir)
 	else
 	{
 		currentPlayer = 1;
+		flag = false;
 	}
 
+	//reset values so that a new mouse click can be obtained
 	firstPitChoice = undefined;
 	secondPitChoice = undefined;
 	startPitChosen = false;
 	directionPitChosen = false;
+}
+
+//this needs refactored!!
+function computerMove()
+{
+	
+	
+
+	//indicies for loops
+	var i = 0;
+	var j = 0;
+
+	//temporary start direction and index
+	var startDirection;
+	var startIndex;
+
+	//best start direction and index
+	var bestStartDirection;
+	var bestStartIndex;
+	var mostBallsTaken = 0;
+
+	if (currentPlayer === 2 && !flag)
+	{
+		flag = true;
+		console.log("PLAYER 2");
+
+		// for all pits in player2's board
+		for (i = 0; i < 16; i++)
+		{
+			var pit_i = i;
+			//can only start moves from pits which have at least 2 balls
+			if (player2Board[i].length > 1)
+			{
+				//for both directions
+				for (j = 0; j < 2; j++)
+				{
+					//copy the boards
+
+					var tempPlayer1Board = jQuery.extend(true, {}, player1Board);
+					var tempPlayer2Board = jQuery.extend(true, {}, player2Board);
+
+					if (j === 0)
+					{
+						startDirection = false;
+					}
+					else
+					{
+						startDirection = true;
+					}
+
+					//variables needed for the move
+					var startPit;
+					var endPit;
+					var endPitEmpty = false;
+
+					//get the start pit
+					startPit = tempPlayer2Board[i];
+
+					while (!endPitEmpty)
+					{
+						//first, check if the pit this part of the move ends on
+						//is empty or not
+
+						var endPitIndex;
+
+						if (startDirection)
+						{
+							endPitIndex = ((i + startPit.length)%16);
+						}
+						else
+						{
+							endPitIndex = ((i - startPit.length)%16);
+						}
+
+						if (endPitIndex < 0)
+						{
+							endPitIndex = endPitIndex + 16;
+						}
+
+						endPit = tempPlayer2Board[endPitIndex];
+						
+						if (endPit.length === 0)
+						{
+							console.log("Set end pit to empty")
+							endPitEmpty = true;
+						}
+
+						//move the balls from the start pit into each of the next
+						//pits, up to end pit
+						while (startPit.length > 0)
+						{
+							if (startDirection)
+							{
+								pit_i++;
+							}
+							else
+							{
+								pit_i--;
+							}
+
+							if (startDirection)
+							{
+								if (pit_i === 16)
+								{
+									pit_i = 0;
+								}
+							}
+							else
+							{
+								if (pit_i === -1)
+								{
+									pit_i = 15;
+								}
+							}			
+
+							tempPlayer2Board[pit_i].push(startPit.pop());	
+							
+
+							// var stop = prompt("Stop");
+							drawBalls();
+							// setTimeout(drawBalls, 1000);
+							
+						}
+
+						//only continue the move if the previous part of the move didn't end
+						// in an empty pit
+						if(!endPitEmpty)
+						{
+							//get the pit from which to continue
+							startPit = tempPlayer2Board[pit_i];
+						}
+
+							//steal from the other player if their pit wasn't empty
+						if (pit_i < 8)
+						{
+							while (tempPlayer1Board[pit_i].length > 0)
+							{
+								tempPlayer2Board[pit_i].push(tempPlayer1Board[pit_i].pop());
+								// setTimeout(drawBalls(), 1500);
+							}
+						}
+							
+					}
+
+						// for (i = pit_i + 1; i = pit_ i + startPit.length; i++)
+						// {
+						// 	if (i === 16)
+						// 	{
+						// 		i = 0;
+						// 	}
+
+						// 	if (currentPlayer === 1)
+						// 	{
+						// 		player1Board[i]
+						// 	}
+						// }
+						
+					var ballsThisMove = 0;
+
+					for (var k = 0; k < 16; k++)
+					{
+						ballsThisMove = ballsThisMove + tempPlayer2Board[i].length;
+					}
+
+					if (ballsThisMove >= mostBallsTaken)
+					{
+						console.log("Got past the best move condition");
+						mostBallsTaken = ballsThisMove;
+						bestStartIndex = i;
+						bestStartDirection = startDirection;
+					}
+				}
+			}
+		}
+
+		console.log("Computer says, move from " + bestStartIndex + " " + bestStartDirection);
+		makeMove(bestStartIndex, bestStartDirection);
+	}
+	
 }
 
 function checkPitIsFullEnough(pit_i)
@@ -771,6 +960,7 @@ function checkForWinner()
 		console.log("player1 wins!");
 	}
 }
+
 
 
 /*
