@@ -314,15 +314,16 @@ function drawBalls()
 function onCanvasClick(e) {
 	//get the coordinate of the mouse click on the canvas
 
-	// var player1Wins = prompt("Should player1 win");
+	//var player1Wins = prompt("Should player1 win");
 
 	// //if this is left on and anyone finds it annoying, just pressing enter each time acts like it isn't there
 	// if (player1Wins === "y")
-	// {
+	//{
 	// 	//Colin, just make your code happen in here... if we put the same code in the win condition it'll work fine.
 	// 	//I know that if finds winners when it should, so its safe to test here and then run it with your code in the 
 	// 	//actual win condition place...
-	// 	console.log("player1Wins = y");
+		//console.log("player1Wins = y");
+		//winMessage("Player 1");
 	// }
 	// else
 	// {
@@ -1006,16 +1007,7 @@ function checkForWinner()
 }
 
 function winMessage(player){
-	ctx.beginPath(); 
-	ctx.font="50px Verdana";
-	ctx.fillStyle="orange";
-	ctx.StrokeStyle="black";
-	var message = player + " wins. AWESOME!" 
-	ctx.textAlign="center"; 
-	ctx.strokeText(message, 200, 200);
-	ctx.stroke();
-	ctx.fill();
-	ctx.closePath();
+  alert(player + " wins. AWESOME!");
 
 }
 
